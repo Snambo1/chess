@@ -8,20 +8,24 @@
 #include "move.h"
 #include "square.h"
 
+//directions the king can move
 static const gc_direction_t KING_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_N,  GC_DIRECTION_NE, GC_DIRECTION_E,
     GC_DIRECTION_SE, GC_DIRECTION_S,  GC_DIRECTION_SW,
     GC_DIRECTION_W,  GC_DIRECTION_NW, GC_DIRECTION_NULL};
 
+//directions the queen can move
 static const gc_direction_t QUEEN_DIRECTIONS[] = {
     GC_DIRECTION_N,  GC_DIRECTION_NE, GC_DIRECTION_E,
     GC_DIRECTION_SE, GC_DIRECTION_S,  GC_DIRECTION_SW,
     GC_DIRECTION_W,  GC_DIRECTION_NW, GC_DIRECTION_NULL};
 
+//directions the rook can move
 static const gc_direction_t ROOK_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_N, GC_DIRECTION_E, GC_DIRECTION_S, GC_DIRECTION_W,
     GC_DIRECTION_NULL};
 
+//directions the bishop can move
 static const gc_direction_t BISHOP_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_NE, GC_DIRECTION_SE, GC_DIRECTION_SW, GC_DIRECTION_NW,
     GC_DIRECTION_NULL};
@@ -29,6 +33,7 @@ static const gc_direction_t BISHOP_DIRECTIONS[GC_DIRECTION_COUNT] = {
 static const gc_direction_t EMPTY_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_NULL};
 
+//directions the knight can move
 static const gc_direction_t KNIGHT_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_KNIGHT_N,  GC_DIRECTION_KNIGHT_NE, GC_DIRECTION_KNIGHT_E,
     GC_DIRECTION_KNIGHT_SE, GC_DIRECTION_KNIGHT_S,  GC_DIRECTION_KNIGHT_SW,
@@ -37,6 +42,7 @@ static const gc_direction_t KNIGHT_DIRECTIONS[GC_DIRECTION_COUNT] = {
 static const gc_direction_t UNIMPLEMENTED_DIRECTIONS[GC_DIRECTION_COUNT] = {
     GC_DIRECTION_NULL};
 
+//initiating a piece node and its properties
 gc_node_t *gc_node_new(square_t id, gc_node_color_t color, gc_speed_t speed,
                        const gc_direction_t directions[GC_DIRECTION_COUNT],
                        const char *label) {
@@ -52,11 +58,11 @@ gc_node_t *gc_node_new(square_t id, gc_node_color_t color, gc_speed_t speed,
     node->seen_black_count = 0;
 
     node->id = id;
-    if (label != NULL) {
+    if (label != NULL) 
         node->label = label;
-    } else {
+    else 
         node->label = SQUARE_NAMES[node->id];
-    }
+
     node->speed = speed;
     node->directions = directions;
     node->color = color;
@@ -64,24 +70,30 @@ gc_node_t *gc_node_new(square_t id, gc_node_color_t color, gc_speed_t speed,
     return node;
 }
 
-void gc_node_free(gc_node_t *node) { free(node); }
+void gc_node_free(gc_node_t *node) { 
+    free(node); 
+}
 
+//returns a newly made king
 gc_node_t *gc_node_king_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_ONE, KING_DIRECTIONS,
                        color == GC_NODE_COLOR_WHITE ? "♔" : "♚");
 }
 
+//returns a newly made queen
 gc_node_t *gc_node_queen_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_MANY, QUEEN_DIRECTIONS,
 
                        color == GC_NODE_COLOR_WHITE ? "♕" : "♛");
 }
 
+//returns newly made rook
 gc_node_t *gc_node_rook_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_MANY, ROOK_DIRECTIONS,
                        color == GC_NODE_COLOR_WHITE ? "♖" : "♜");
 }
 
+//returns a newly made pawn
 gc_node_t *gc_node_pawn_new(square_t id, gc_node_color_t color) {
     // TODO check "id" to see if 7th 3rd rank and adjust accordingly.
     // TODO Add DOUBLE for movement
@@ -89,20 +101,27 @@ gc_node_t *gc_node_pawn_new(square_t id, gc_node_color_t color) {
                        color == GC_NODE_COLOR_WHITE ? "♙" : "♟");
 }
 
+//returns a newly made knight
 gc_node_t *gc_node_knight_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_ONE, KNIGHT_DIRECTIONS,
                        color == GC_NODE_COLOR_WHITE ? "♘" : "♞");
 }
 
+//returns a newly made bishop
 gc_node_t *gc_node_bishop_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_MANY, BISHOP_DIRECTIONS,
                        color == GC_NODE_COLOR_WHITE ? "♗" : "♝");
 }
+
+//returns a newly made empty square
 gc_node_t *gc_node_empty_new(square_t id, gc_node_color_t color) {
     return gc_node_new(id, color, GC_NONE, EMPTY_DIRECTIONS, SQUARE_NAMES[id]);
 }
+
+//this particular function prototype feels like it belongs in gc.h
 void gc_graph_free(gc_graph_t *graph);
 
+//creates a piece graph based off of the board
 gc_graph_t *gc_graph_new(board_t *board) {
     gc_graph_t *graph = malloc(sizeof(gc_graph_t));
 
@@ -157,6 +176,9 @@ gc_graph_t *gc_graph_new(board_t *board) {
     return graph;
 }
 
+/*prints piece information using the dot node,
+prints piece square, name, and position to file output
+*/
 void gc_fprint_node(FILE *out_fp, gc_node_t *node) {
     square_t square = node->id;
 
@@ -168,31 +190,31 @@ void gc_fprint_node(FILE *out_fp, gc_node_t *node) {
     dot_fprint_node(out_fp, dot_node);
 }
 
+//prits the edge to file output
 void gc_fprint_edge(FILE *out_fp, gc_edge_t *edge) {
     const char *from = SQUARE_NAMES[edge->a->id];
     const char *to = SQUARE_NAMES[edge->b->id];
 
     const char *color = "black";
-    if (edge->color == GC_EDGE_COLOR_ATTACK) {
+    if (edge->color == GC_EDGE_COLOR_ATTACK)
         color = "red";
-    } else if (edge->color == GC_EDGE_COLOR_DEFENSE) {
+    else if (edge->color == GC_EDGE_COLOR_DEFENSE)
         color = "green";
-    }
 
     dot_edge_t dot_edge = {.a = from, .b = to, .color = color};
 
     dot_fprint_edge(out_fp, dot_edge);
 }
 
+//prints out the whole graph to file output
 void gc_fprint_graph(FILE *out_fp, gc_graph_t *graph) {
     dot_fprint_start(out_fp);
 
     bool seen[SQUARE_COUNT] = {false};
     for (gc_edge_t *edge = graph->edges; edge != NULL; edge = edge->next) {
         if (graph->hits[edge->b->id] < 2 &&
-            edge->b->color == GC_NODE_COLOR_EMPTY) {
+            edge->b->color == GC_NODE_COLOR_EMPTY)
             continue;
-        }
 
         seen[edge->a->id] = true;
         seen[edge->b->id] = true;
@@ -200,21 +222,21 @@ void gc_fprint_graph(FILE *out_fp, gc_graph_t *graph) {
         gc_fprint_edge(out_fp, edge);
     }
 
-    for (square_t i = 0; i < SQUARE_COUNT; i++) {
-        if (seen[i]) {
+    for (square_t i = 0; i < SQUARE_COUNT; i++) 
+        if (seen[i]) 
             gc_fprint_node(out_fp, graph->nodes[i]);
-        }
-    }
+        
 
     dot_fprint_end(out_fp);
 }
 
+//takes in the mmoves, and inserts them at a specific edge
 void gc_graph_insert_edges(gc_graph_t *graph, movelist_t *moves) {
-    for (move_t *move = moves->head; move != NULL; move = move->next) {
+    for (move_t *move = moves->head; move != NULL; move = move->next)
         gc_graph_insert_edge(graph, move->from, move->to, 1);
-    }
 }
 
+//inserts an edge to the graph
 void gc_graph_insert_edge(gc_graph_t *graph, square_t a, square_t b,
                           int weight) {
     gc_edge_t *edge = malloc(sizeof(gc_edge_t));
@@ -238,36 +260,35 @@ void gc_graph_insert_edge(gc_graph_t *graph, square_t a, square_t b,
         edge->color = GC_EDGE_COLOR_DEFENSE;
         edge->b->defended_count++;
         edge->a->defending_count++;
-    } else {
+    } else 
         edge->color = GC_EDGE_COLOR_NEUTRAL;
-    }
 
     edge->a->see_count++;
     edge->b->seen_count++;
 
-    if (edge->a->color == GC_NODE_COLOR_WHITE) {
+    if (edge->a->color == GC_NODE_COLOR_WHITE) 
         edge->b->seen_white_count++;
-    } else if (edge->a->color == GC_NODE_COLOR_WHITE) {
+    else if (edge->a->color == GC_NODE_COLOR_WHITE)
         edge->b->seen_black_count++;
-    }
 
     graph->edges = edge;
 }
 
+//frees all the edges
 void gc_edges_free(gc_edge_t *edges) {
-    if (edges == NULL) {
+    if (edges == NULL)
         return;
-    }
 
     gc_edges_free(edges->next);
 
     free(edges);
 }
 
+//frees all parts of the graph
 void gc_graph_free(gc_graph_t *graph) {
     gc_edges_free(graph->edges);
 
-    for (square_t s = 0; s < SQUARE_COUNT; s++) {
+    for (square_t s = 0; s < SQUARE_COUNT; s++) 
         gc_node_free(graph->nodes[s]);
-    }
+    
 }

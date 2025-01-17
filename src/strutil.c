@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 
+//removes whitespace from the end of a string
 void trim_right(char *str) {
     char *tail = str + strlen(str) - 1;
 

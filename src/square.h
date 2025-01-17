@@ -31,6 +31,9 @@ typedef enum square_file {
     SQUARE_FILE_OOB,
 } square_file_t;
 
+/*defines a square, a suggestion could be having a 2d array of pointers,
+it would probably allow for more pointer access rather than subscripting which could improve
+the speed of the codebase as a whole, although that's a BIG change and it's up to you if you want to commit to that*/
 typedef enum square {
     SQUARE_A1 = 0 + (0 * SQUARE_RANK_COUNT),
     SQUARE_A2 = 0 + (1 * SQUARE_RANK_COUNT),

@@ -8,18 +8,21 @@
 #include "move.h"
 #include "square.h"
 
+//piece colors
 typedef enum gc_node_color {
     GC_NODE_COLOR_BLACK = BLACK,
     GC_NODE_COLOR_WHITE = WHITE,
     GC_NODE_COLOR_EMPTY
 } gc_node_color_t;
 
+//edge colors
 typedef enum gc_edge_color {
     GC_EDGE_COLOR_DEFENSE,
     GC_EDGE_COLOR_ATTACK,
     GC_EDGE_COLOR_NEUTRAL
 } gc_edge_color_t;
 
+//listing directions
 typedef enum gc_direction {
     GC_DIRECTION_N = 0,
     GC_DIRECTION_NE,
@@ -41,12 +44,14 @@ typedef enum gc_direction {
     GC_DIRECTION_NULL
 } gc_direction_t;
 
+//listing speeds
 typedef enum gc_speed {
     GC_ONE = 0,
     GC_MANY,
     GC_NONE,
 } gc_speed_t;
 
+//actual piece node
 typedef struct gc_node {
     gc_speed_t speed;
     const gc_direction_t *directions;
@@ -64,6 +69,7 @@ typedef struct gc_node {
     size_t seen_black_count;
 } gc_node_t;
 
+//edge node, again, I suggest having more specific variable names than a and b
 typedef struct gc_edge {
     int weight;
     gc_node_t *a;
@@ -72,6 +78,7 @@ typedef struct gc_edge {
     gc_edge_color_t color;
 } gc_edge_t;
 
+//graph of board, holds all the nodes edges and hits
 typedef struct gc_graph {
     gc_node_t *nodes[SQUARE_COUNT];
     gc_edge_t *edges;

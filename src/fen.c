@@ -7,6 +7,7 @@
 #include "board.h"
 #include "square.h"
 
+//converting the given char to corresponding piece number
 square_piece_t to_piece(char symbol) {
     switch (symbol) {
         case 'P':
@@ -40,6 +41,7 @@ square_piece_t to_piece(char symbol) {
     return SQUARE_EMPTY;
 }
 
+//returns the char representing the piece from the enum
 char from_piece(square_piece_t piece) {
     switch (piece) {
         case SQUARE_PAWN_WHITE:
@@ -75,18 +77,18 @@ char from_piece(square_piece_t piece) {
     return '\0';
 }
 
+//maps out fen notation of the board
 void fen_build(char **fen_out, board_t *board) {
-    char *fen = malloc(100);
+    char *fen = malloc(100);//might be advisable to make this a constant, instead of mallocing arbitrary value
     size_t pos = 0;
 
     for (int rank = SQUARE_RANK_COUNT - 1; rank >= 0; rank--) {
-        if (rank < SQUARE_RANK_COUNT - 1) {
+        if (rank < SQUARE_RANK_COUNT - 1) 
             fen[pos++] = '/';
-        }
+        
         int empties = 0;
         for (int file = 0; file < SQUARE_FILE_COUNT; file++) {
-            square_piece_t piece =
-                board_get_piece(board, square_from(file, rank));
+            square_piece_t piece = board_get_piece(board, square_from(file, rank));
             char symbol = from_piece(piece);
             if (symbol != '\0') {
                 if (empties > 0) {
@@ -94,9 +96,8 @@ void fen_build(char **fen_out, board_t *board) {
                     empties = 0;
                 }
                 fen[pos++] = symbol;
-            } else {
+            } else 
                 empties++;
-            }
         }
         if (empties > 0) {
             fen[pos++] = '0' + empties;
@@ -121,17 +122,16 @@ void fen_build(char **fen_out, board_t *board) {
     *fen_out = fen;
 }
 
+//properly placing each piece on the board based off of the fen notation
 void fen_parse(const char *fen, board_t *board) {
     int idx = 0;
     while (*fen != '\0') {
         char c = *(fen++);
-        if (c == ' ') {
+        if (c == ' ') 
             break;
-        }
 
-        if (c == '/') {
+        if (c == '/') 
             continue;
-        }
 
         int rank = 7 - (idx / 8);
         int file = idx % 8;
@@ -139,8 +139,7 @@ void fen_parse(const char *fen, board_t *board) {
         if (isdigit(c)) {
             int empties = c - '0';
             for (int i = 0; i < empties; i++) {
-                board_set_piece(board, square_from(file + i, rank),
-                                SQUARE_EMPTY);
+                board_set_piece(board, square_from(file + i, rank), SQUARE_EMPTY);
                 idx++;
             }
         } else {
@@ -150,9 +149,8 @@ void fen_parse(const char *fen, board_t *board) {
         }
     }
 
-    if (*fen == 'w') {
+    if (*fen == 'w') 
         board->turn = WHITE;
-    } else if (*fen == 'b') {
+    else if (*fen == 'b') 
         board->turn = BLACK;
-    }
 }

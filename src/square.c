@@ -34,19 +34,17 @@ const char* PIECE_NAMES[SQUARE_PIECE_COUNT] = {
     "♔",     "♚",
 };
 
+//determines where the square is given the file and rank
 inline square_t square_from(int file, int rank) {
-    if (file < 0 || file >= SQUARE_FILE_COUNT) {
+    if (file < 0 || file >= SQUARE_FILE_COUNT)
         return SQUARE_OOB;
-    }
 
-    if (rank < 0 || rank >= SQUARE_RANK_COUNT) {
+    if (rank < 0 || rank >= SQUARE_RANK_COUNT)
         return SQUARE_OOB;
-    }
 
     int square = file + (rank * SQUARE_RANK_COUNT);
-    if (square >= SQUARE_COUNT) {
+    if (square >= SQUARE_COUNT)
         return SQUARE_OOB;
-    }
 
     return square;
 }

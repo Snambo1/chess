@@ -5,10 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
+#include <string.h>
 
 #include "strutil.h"
 
+//creates a new tagcmp
 tagcmp_t *tagcmp_new(const char *name, const char *value, tagcmp_kind_t kind) {
     tagcmp_t *cmp = malloc(sizeof(tagcmp_t));
 
@@ -20,6 +21,7 @@ tagcmp_t *tagcmp_new(const char *name, const char *value, tagcmp_kind_t kind) {
     return cmp;
 }
 
+//creates a new list that stores the tag order
 tagorder_t *tagorder_new(const char *name) {
     tagorder_t *tag = malloc(sizeof(tagorder_t));
 
@@ -29,16 +31,17 @@ tagorder_t *tagorder_new(const char *name) {
     return tag;
 }
 
+//frees the tag order
 void tagorder_free(tagorder_t *tag) {
-    if (tag == NULL) {
+    if (tag == NULL)
         return;
-    }
 
     tagorder_free(tag->next);
     free(tag->name);
     free(tag);
 }
 
+//adds to the tagspec
 void tagspec_add(tagspec_t *spec, const char *name, const char *value,
                  tagcmp_kind_t kind) {
     if (kind != TAG_ALWAYS) {
@@ -64,6 +67,7 @@ void tagspec_add(tagspec_t *spec, const char *name, const char *value,
     }
 }
 
+//creates a new tagspec
 tagspec_t *tagspec_new(void) {
     tagspec_t *tags = malloc(sizeof(tagspec_t));
 
@@ -76,6 +80,7 @@ tagspec_t *tagspec_new(void) {
     return tags;
 }
 
+//frees all the tagcmps
 void tagcmp_free(tagcmp_t *cmp) {
     while (cmp != NULL) {
         tagcmp_t *next = cmp->next;
@@ -88,10 +93,10 @@ void tagcmp_free(tagcmp_t *cmp) {
     }
 }
 
+//frees the tagspecs
 void tagspec_free(tagspec_t *spec) {
-    if (spec == NULL) {
+    if (spec == NULL)
         return;
-    }
 
     tagcmp_free(spec->head);
     tagorder_free(spec->order_head);
@@ -99,6 +104,7 @@ void tagspec_free(tagspec_t *spec) {
     free(spec);
 }
 
+//get the king of tagspec
 tagcmp_kind_t tagspec_get_kind(char opperator) {
     switch (opperator) {
         case '!':
@@ -116,7 +122,10 @@ tagcmp_kind_t tagspec_get_kind(char opperator) {
     return TAG_UNKNOWN_CMP;
 }
 
+//returns true if name of the tagspec isn't empty
 bool tagspec_parse_line(tagspec_t *spec, const char *line) {
+
+    //I recommend making the calloc byte count a macro constant, it's better for readability 
     char *name = calloc(200, 1);
     char *value = calloc(200, 1);
     char *cmp = calloc(20, 1);
@@ -142,21 +151,23 @@ bool tagspec_parse_line(tagspec_t *spec, const char *line) {
     return success;
 }
 
+/*gets and checks all the tagpsecs in a file, I will say that this should probably have a bool
+return value as to determine if a file is valid or not
+*/
 void tagspec_load(tagspec_t *spec, FILE *spec_fp) {
     char *line = NULL;
     size_t line_len;
-    while (getline(&line, &line_len, spec_fp) != -1) {
+    while (getline(&line, &line_len, spec_fp) != -1)
         assert(tagspec_parse_line(spec, line));
-    }
 
     free(line);
 }
 
+//checks if a tagspec matches
 bool tagspec_matches(tagspec_t *spec, const char *name, const char *value) {
     for (tagcmp_t *cmp = spec->head; cmp != NULL; cmp = cmp->next) {
-        if (strcmp(name, cmp->name) != 0) {
+        if (strcmp(name, cmp->name) != 0)
             continue;
-        }
 
         switch (cmp->kind) {
             case TAG_EQUALS:

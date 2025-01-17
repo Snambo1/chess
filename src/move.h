@@ -6,6 +6,9 @@
 
 #include "square.h"
 
+/*defines a "move",includes where the piece was, where it's going
+and if it captured a piece, and a linked list to the next move
+*/
 typedef struct move {
     square_t from;
     square_t to;
@@ -13,6 +16,7 @@ typedef struct move {
     struct move* next;
 } move_t;
 
+//holds all the moves
 typedef struct movelist {
     move_t* head;
     move_t* tail;

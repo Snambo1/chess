@@ -17,11 +17,14 @@
  * <Pawn capture> ::= <To>[<Promotion>]
  */
 
+//the current turn of the board
 typedef enum board_turn {
     BLACK = 0,
     WHITE = 1,
 } board_turn_t;
 
+/*the board definition, with squares being each specific position on the 
+board and turn recording the current turn*/
 typedef struct board {
     squares_t squares;
     board_turn_t turn;

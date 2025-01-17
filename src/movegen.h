@@ -1,6 +1,7 @@
 #ifndef MOVE_GEN_H
 #define MOVE_GEN_H
 
+#include <stdbool.h>
 #include "board.h"
 #include "move.h"
 #include "square.h"

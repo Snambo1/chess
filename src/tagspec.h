@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+//tag types
 typedef enum tagcmp_kind {
     TAG_EQUALS = 0,
     TAG_NOT_EQUALS,
@@ -14,16 +15,19 @@ typedef enum tagcmp_kind {
     TAG_UNKNOWN_CMP,
 } tagcmp_kind_t;
 
+//tag kind, I feel as though it requires a little adjustments to the name
 typedef enum tagop_kind {
     TAG_OP_SPLIT = 0,
     TAG_OP_UNKNOWN,
 } tagop_kind_t;
 
+//linked list of tags
 typedef struct tagorder {
     char *name;
     struct tagorder *next;
 } tagorder_t;
 
+//I feel as though this also requires a better name, but this is just another linked list
 typedef struct tagcmp {
     tagcmp_kind_t kind;
     char *name;
@@ -31,6 +35,7 @@ typedef struct tagcmp {
     struct tagcmp *next;
 } tagcmp_t;
 
+//tagspec, again, I personally think the naming could be more specific
 typedef struct tagspec {
     tagcmp_t *head;
     tagcmp_t *tail;

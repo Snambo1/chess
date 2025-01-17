@@ -8,11 +8,11 @@
 #include "move.h"
 #include "square.h"
 
+//inserts a move, returns false if either of the squares are an error
 bool insert_move(movelist_t* moves_out, board_t* board, square_t from,
                  square_t to) {
-    if (from == SQUARE_OOB || to == SQUARE_OOB) {
+    if (from == SQUARE_OOB || to == SQUARE_OOB)
         return false;
-    }
 
     move_t* move = move_new(from, to);
     move->capture = board->squares[to] != SQUARE_EMPTY;
@@ -22,6 +22,7 @@ bool insert_move(movelist_t* moves_out, board_t* board, square_t from,
     return !move->capture;
 }
 
+//determines the piece being moved and properly moves it, or returns false if there's no more moves
 bool movegen(movelist_t* out_moves, board_t* board, board_turn_t turn) {
     for (size_t i = 0; i < SQUARE_COUNT; i++) {
         square_piece_t piece = board->squares[i];
@@ -77,6 +78,10 @@ bool movegen(movelist_t* out_moves, board_t* board, board_turn_t turn) {
     return out_moves->head != NULL;
 }
 
+/*returns a pointer to a new movelist, as a suggestion, out isn't particularly filled
+with any information, this function seems to be superfluous for the most part as it doesn't
+affect any outside values or return any newly derived values
+*/
 movelist_t* movegen_subgraph(movelist_t* moves, square_t center) {
     movelist_t* out = movelist_new();
 
@@ -91,39 +96,37 @@ movelist_t* movegen_subgraph(movelist_t* moves, square_t center) {
     return out;
 }
 
+//move function for the bishop
 void movegen_bishop(movelist_t* moves_out, board_t* board, square_t from) {
     square_rank_t rank = square_get_rank(from);
     square_file_t file = square_get_file(from);
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file + i, rank + i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file + i, rank - i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file - i, rank + i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file - i, rank - i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 }
 
+//move function for the king
 void movegen_king(movelist_t* moves_out, board_t* board, square_t from) {
     square_rank_t rank = square_get_rank(from);
     square_file_t file = square_get_file(from);
@@ -138,6 +141,7 @@ void movegen_king(movelist_t* moves_out, board_t* board, square_t from) {
     insert_move(moves_out, board, from, square_from(file - 1, rank - 1));
 }
 
+//move function for the pawn
 void movegen_pawn(movelist_t* moves_out, board_t* board, square_t from) {
     square_rank_t rank = square_get_rank(from);
     square_file_t file = square_get_file(from);
@@ -153,21 +157,19 @@ void movegen_pawn(movelist_t* moves_out, board_t* board, square_t from) {
 
     int up_rank = rank + (is_black ? -1 : 1);
     square_t up = square_from(file, up_rank);
-    if (up != SQUARE_OOB && board->squares[up] == SQUARE_EMPTY) {
+    if (up != SQUARE_OOB && board->squares[up] == SQUARE_EMPTY)
         insert_move(moves_out, board, from, up);
-    }
 
     square_t left = square_from(file - 1, up_rank);
-    if (left != SQUARE_OOB && board->squares[left] == SQUARE_EMPTY) {
+    if (left != SQUARE_OOB && board->squares[left] == SQUARE_EMPTY)
         insert_move(moves_out, board, from, left);
-    }
 
     square_t right = square_from(file + 1, up_rank);
-    if (right != SQUARE_OOB && board->squares[right] == SQUARE_EMPTY) {
+    if (right != SQUARE_OOB && board->squares[right] == SQUARE_EMPTY)
         insert_move(moves_out, board, from, right);
-    }
 }
 
+//move function for the knight
 void movegen_knight(movelist_t* moves_out, board_t* board, square_t from) {
     square_file_t file = square_get_file(from);
     square_rank_t rank = square_get_rank(from);
@@ -185,96 +187,86 @@ void movegen_knight(movelist_t* moves_out, board_t* board, square_t from) {
     insert_move(moves_out, board, from, square_from(file - 2, rank - 1));
 }
 
+//move function for the queen
 void movegen_queen(movelist_t* moves_out, board_t* board, square_t from) {
     square_rank_t rank = square_get_rank(from);
     square_file_t file = square_get_file(from);
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file + i, rank + i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file + i, rank - i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file - i, rank + i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file - i, rank - i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file, rank + i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file, rank - i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file - i, rank);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file + i, rank);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to)) 
             break;
-        }
     }
 }
 
+//move function for the rook
 void movegen_rook(movelist_t* moves_out, board_t* board, square_t from) {
     square_rank_t rank = square_get_rank(from);
     square_file_t file = square_get_file(from);
 
     for (int i = rank + 1; i < SQUARE_RANK_COUNT; i++) {
         square_t to = square_from(file, i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = rank - 1; i >= 0; i--) {
         square_t to = square_from(file, i);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to)) 
             break;
-        }
     }
 
     for (int i = file + 1; i < SQUARE_FILE_COUNT; i++) {
         square_t to = square_from(i, rank);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 
     for (int i = file - 1; i >= 0; i--) {
         square_t to = square_from(i, rank);
-        if (!insert_move(moves_out, board, from, to)) {
+        if (!insert_move(moves_out, board, from, to))
             break;
-        }
     }
 }

@@ -1,6 +1,7 @@
 #ifndef PGN_MOVE_H
 #define PGN_MOVE_H
 
+//defines a move type for the pgn
 typedef enum pgn_movetype {
     PGN_MOVETYPE_VARIATION,
     PGN_MOVETYPE_MOVE,

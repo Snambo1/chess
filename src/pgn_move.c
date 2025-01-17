@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//creates a new pgn movelist
 pgn_movelist_t *pgn_movelist_new(void) {
     pgn_movelist_t *moves = malloc(sizeof(pgn_movelist_t));
 
@@ -14,6 +15,7 @@ pgn_movelist_t *pgn_movelist_new(void) {
     return moves;
 }
 
+//adds a new pgn movelist
 void pgn_movelist_add(pgn_movelist_t *moves, pgn_movetype_t kind,
                       const char *value) {
     pgn_move_t *move = malloc(sizeof(pgn_move_t));
@@ -31,10 +33,10 @@ void pgn_movelist_add(pgn_movelist_t *moves, pgn_movetype_t kind,
     }
 }
 
+//frees the pgn movelist
 void pgn_movelist_free(pgn_movelist_t *moves) {
-    if (moves == NULL) {
+    if (moves == NULL)
         return;
-    }
 
     pgn_move_t *head = moves->head;
 

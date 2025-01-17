@@ -8,6 +8,7 @@
 #include "pgn_move.h"
 #include "pgn_tag.h"
 
+//creates the new pgn
 pgn_t *pgn_new(void) {
     struct pgn_t *pgn = malloc(sizeof(struct pgn_t));
 
@@ -25,6 +26,7 @@ pgn_t *pgn_new(void) {
     return pgn;
 }
 
+//frees the pgn
 void pgn_free(struct pgn_t *pgn) {
     while (pgn != NULL) {
         pgn_t *next = pgn->next;
@@ -39,6 +41,7 @@ void pgn_free(struct pgn_t *pgn) {
     }
 }
 
+//returns a pgn list
 pgnlist_t *pgnlist_new(void) {
     pgnlist_t *pgns = malloc(sizeof(pgnlist_t));
 
@@ -48,16 +51,17 @@ pgnlist_t *pgnlist_new(void) {
     return pgns;
 }
 
+//frees the pgn list
 void pgnlist_free(pgnlist_t *pgns) {
-    if (pgns == NULL) {
+    if (pgns == NULL) 
         return;
-    }
 
     pgn_free(pgns->head);
 
     free(pgns);
 }
 
+//adds the result to the end of the pgn list
 void pgnlist_add_result(pgnlist_t *pgns, const char *result) {
     pgns->tail->result = strdup(result);
     pgns->tail->next = pgn_new();

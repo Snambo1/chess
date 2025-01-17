@@ -6,6 +6,9 @@
 #include "symbol.h"
 #include "tagspec.h"
 
+/*the pgn list, specs list, list of symbols and the board, personally
+I feel as though more verbose and specific variable names would go
+a long way here, as these names are a tad too condensed */
 typedef struct pgn_frontend_t {
     pgnlist_t* pgns;
     tagspec_t* spec;
